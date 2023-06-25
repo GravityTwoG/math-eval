@@ -5,12 +5,14 @@ export enum TokenType {
   DIV = 'DIV',
   POW = 'POW',
   CONST = 'CONST',
-  PAREN = 'PAREN',
+  PAREN_OPEN = 'PAREN_OPEN',
+  PAREN_CLOSE = 'PAREN_CLOSE',
+  EOF = 'EOF',
 }
 
 export type Token = { type: TokenType; value: string };
 
-export function Lexer(content: string) {
+export function getLexems(content: string) {
   const lexems: Token[] = [];
 
   let constant = '';
@@ -53,11 +55,11 @@ export function Lexer(content: string) {
           break;
         }
         case '(': {
-          lexems.push({ type: TokenType.PAREN, value: char });
+          lexems.push({ type: TokenType.PAREN_OPEN, value: char });
           break;
         }
         case ')': {
-          lexems.push({ type: TokenType.PAREN, value: char });
+          lexems.push({ type: TokenType.PAREN_CLOSE, value: char });
           break;
         }
       }
@@ -69,6 +71,7 @@ export function Lexer(content: string) {
     isConst = false;
     constant = '';
   }
+  lexems.push({ type: TokenType.EOF, value: '' });
 
   return lexems;
 }
