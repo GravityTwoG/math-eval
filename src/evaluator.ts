@@ -9,7 +9,7 @@ export function evaluate(commands: Command[]) {
       return stack.pop() as number;
     }
 
-    return parseInt(operand);
+    return parseFloat(operand);
   }
 
   for (const command of commands) {
@@ -42,10 +42,17 @@ export function evaluate(commands: Command[]) {
           )
         );
         break;
+      case 'PUSH':
+        stack.push(extractOperand(command.operand1));
+        break;
       default:
-        throw `Invalid Operation: ${command.operation}`;
+        return {
+          isValid: false,
+          message: `Invalid Operation: ${command.operation}`,
+          result: 0,
+        };
     }
   }
 
-  return stack[stack.length - 1];
+  return { isValid: true, message: '', result: stack[stack.length - 1] };
 }

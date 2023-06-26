@@ -11,13 +11,13 @@ import { Token, TokenType } from './lexer';
 // EndExpr: [+-/*^] Expression
 // EndExpr starts with: "+", "-", "/", "*", "^"
 
-export type ParseResult = {
+export type ParserResult = {
   isValid: boolean;
   message: string;
   postfix: string[];
 };
 
-export function parse(tokens: Token[]): ParseResult {
+export function parse(tokens: Token[]): ParserResult {
   if (tokens.length === 0 || tokens[0].type === TokenType.EOF) {
     return { isValid: true, message: '', postfix: [] };
   }
@@ -118,12 +118,10 @@ export function parse(tokens: Token[]): ParseResult {
         ) {
           states.push('EndExpr');
         } else if (token.type === TokenType.PAREN_CLOSE) {
-          if (
-            peek(states) === TokenType.PAREN_CLOSE ||
-            states[states.length - 2] === TokenType.PAREN_CLOSE
-          ) {
+          if (states.find((s) => s === TokenType.PAREN_CLOSE)) {
             continue;
           }
+
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}:${token.value}" in ExpressionEnd`,

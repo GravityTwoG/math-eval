@@ -6,12 +6,18 @@ export type Command = {
     | TokenType.SUB
     | TokenType.MUL
     | TokenType.DIV
-    | TokenType.POW;
+    | TokenType.POW
+    | 'PUSH';
   operand1: string;
   operand2: string;
 };
 
-export function toPseudoCode(postfix: string[]) {
+export type ToPseudoCodeResult = {
+  isValid: boolean;
+  pseudoCode: Command[];
+};
+
+export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
   const pseudoCode: Command[] = [];
   const opStack: string[] = [];
 
@@ -49,6 +55,19 @@ export function toPseudoCode(postfix: string[]) {
           };
         }
     }
+  }
+
+  if (opStack.length && opStack[opStack.length - 1] !== 'POP') {
+    return {
+      isValid: true,
+      pseudoCode: [
+        {
+          operation: 'PUSH',
+          operand1: opStack.shift() as string,
+          operand2: '',
+        },
+      ],
+    };
   }
 
   return { isValid: true, pseudoCode };

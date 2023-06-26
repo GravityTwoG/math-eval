@@ -12,10 +12,17 @@ export enum TokenType {
 
 export type Token = { type: TokenType; value: string };
 
-export function getLexems(content: string) {
+export type LexerResult = {
+  isValid: boolean;
+  message: string;
+  lexems: Token[];
+};
+
+export function getLexems(content: string): LexerResult {
   const lexems: Token[] = [];
 
   let constant = '';
+  let wasDot = false;
   let isConst = false;
 
   for (let i = 0; i < content.length; i++) {
@@ -24,12 +31,29 @@ export function getLexems(content: string) {
     if (char.match(/[0-9]/)) {
       constant += char;
       isConst = true;
+    } else if (char === '.') {
+      if (!isConst) {
+        lexems.push({ type: TokenType.EOF, value: '' });
+        return { isValid: false, message: 'Unexpected symbol "."', lexems };
+      }
+      if (wasDot) {
+        lexems.push({ type: TokenType.EOF, value: '' });
+        return { isValid: false, message: 'Unexpected symbol "."', lexems };
+      }
+      wasDot = true;
+      constant += char;
     } else if (char === ' ') {
       continue;
     } else {
       if (isConst) {
+        if (constant[constant.length - 1] === '.') {
+          lexems.push({ type: TokenType.EOF, value: '' });
+          return { isValid: false, message: 'Unexpected symbol "."', lexems };
+        }
+
         lexems.push({ type: TokenType.CONST, value: constant });
         isConst = false;
+        wasDot = false;
         constant = '';
       }
 
@@ -67,11 +91,16 @@ export function getLexems(content: string) {
   }
 
   if (isConst) {
+    if (constant[constant.length - 1] === '.') {
+      lexems.push({ type: TokenType.EOF, value: '' });
+      return { isValid: false, message: 'Unexpected symbol "."', lexems };
+    }
+
     lexems.push({ type: TokenType.CONST, value: constant });
     isConst = false;
     constant = '';
   }
   lexems.push({ type: TokenType.EOF, value: '' });
 
-  return lexems;
+  return { isValid: true, message: '', lexems };
 }

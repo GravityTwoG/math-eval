@@ -2,15 +2,19 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 import { Input } from './components/Input';
-import { getLexems, Token } from './lexer';
-import { ParseResult, parse } from './parser';
+import { getLexems, LexerResult } from './lexer';
+import { ParserResult, parse } from './parser';
 import { Command, toPseudoCode } from './toPseudoCode';
 import { evaluate } from './evaluator';
 
 export function App() {
   const [expression, setExpression] = useState('');
-  const [tokens, setTokens] = useState<Token[]>([]);
-  const [parseResult, setParseResult] = useState<ParseResult>({
+  const [lexerResult, setLexerResult] = useState<LexerResult>({
+    isValid: true,
+    message: 'Empty',
+    lexems: [],
+  });
+  const [parseResult, setParseResult] = useState<ParserResult>({
     isValid: true,
     message: '',
     postfix: [],
@@ -19,22 +23,44 @@ export function App() {
     isValid: boolean;
     pseudoCode: Command[];
   }>({
-    isValid: true,
+    isValid: false,
     pseudoCode: [],
   });
-  const [result, setResult] = useState(0);
+  const [evaluationResult, setEvaluationResult] = useState<{
+    isValid: boolean;
+    message: string;
+    result: number;
+  }>({ isValid: false, message: 'PseudoCode is invalid', result: 0 });
 
   useEffect(() => {
-    const lexems = getLexems(expression);
-    setTokens(lexems);
-    const parseRes = parse(lexems);
+    const lexRes = getLexems(expression);
+    setLexerResult(lexRes);
+    const parseRes = parse(lexRes.lexems);
     setParseResult(parseRes);
-    const inter = toPseudoCode(parseRes.postfix);
-    setIntermediate(inter);
-    if (inter.isValid) {
-      setResult(evaluate(inter.pseudoCode));
+
+    if (!parseRes.isValid) {
+      setIntermediate({
+        isValid: false,
+        pseudoCode: [],
+      });
+      setEvaluationResult({
+        isValid: false,
+        message: 'PseudoCode is invalid',
+        result: 0,
+      });
     } else {
-      setResult(0);
+      const inter = toPseudoCode(parseRes.postfix);
+      setIntermediate(inter);
+
+      if (!inter.isValid) {
+        setEvaluationResult({
+          isValid: false,
+          message: 'PseudoCode is invalid',
+          result: 0,
+        });
+      } else {
+        setEvaluationResult(evaluate(inter.pseudoCode));
+      }
     }
   }, [expression]);
 
@@ -46,25 +72,26 @@ export function App() {
         <Input
           value={expression}
           onChange={(v) => setExpression(v)}
-          pattern="([0-9]|[+* \^\-\/\(\)])+"
+          pattern="(([0-9]+)|([+*\^\-\/\(\) \.]))+"
           type="text"
           style={{ width: '100%' }}
         />
       </div>
 
-      <h2>Tokens</h2>
+      <h2>Lexer Result</h2>
+      {!lexerResult.isValid && <p>Error: {lexerResult.message}</p>}
       <p>
-        {tokens.map((token, idx) => (
+        Tokens:{' '}
+        {lexerResult.lexems.map((token, idx) => (
           <span key={idx}>
             {token.type}: {token.value}{' '}
           </span>
         ))}
       </p>
-      <p>Is valid: {parseResult.isValid.toString()}</p>
-      {!parseResult.isValid && <p>Error: {parseResult.message}</p>}
 
-      <h2>Postfix Notation</h2>
-      <p>{parseResult.postfix.join(' ')}</p>
+      <h2>Parser Result</h2>
+      {!parseResult.isValid && <p>Error: {parseResult.message}</p>}
+      <p>Postfix Notation: {parseResult.postfix.join(' ')}</p>
 
       <h2>PseudoCode</h2>
       <p>Is valid: {intermediate.isValid.toString()}</p>
@@ -84,7 +111,8 @@ export function App() {
       </div>
 
       <h2>Result</h2>
-      <p>{result}</p>
+      {!evaluationResult.isValid && <p>Error: {evaluationResult.message}</p>}
+      <p>{evaluationResult.result}</p>
     </div>
   );
 }
