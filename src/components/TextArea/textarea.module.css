@@ -1,0 +1,22 @@
+.teaxarea {
+  padding: 0.5em 0.25em;
+  resize: none;
+  text-indent: 0.25em;
+  font-size: 16px;
+  border: 2px solid #d8d8d8;
+  border-radius: 3px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.teaxarea:hover {
+  border-color: var(--color-yellow-bg);
+}
+
+.teaxarea:focus {
+  border-color: var(--color-green-bg);
+}
+
+.teaxarea[data-is-valid='false'] {
+  border-color: rgba(255, 77, 106, 0.9);
+}

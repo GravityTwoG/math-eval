@@ -1,0 +1,49 @@
+.tokens-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+}
+
+.token-item {
+  margin: 2px;
+  display: inline-flex;
+  flex-direction: column;
+  padding: 4px 6px 0px 6px;
+
+  border-radius: 3px;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #777;
+}
+
+.token-item[data-token-type='CONST'] {
+  background-color: var(--color-yellow-bg);
+  color: var(--color-yellow-text);
+}
+.token-item[data-token-type='ARITHMETIC'] {
+  background-color: var(--color-green-bg);
+  color: var(--color-green-text);
+}
+.token-item[data-token-type='PAREN_OPEN'],
+.token-item[data-token-type='PAREN_CLOSE'] {
+  background-color: var(--color-violet-bg);
+  color: var(--color-violet-text);
+}
+
+.token-value {
+  display: inline-block;
+  margin-bottom: 2px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.token-type {
+  display: inline-block;
+  margin-bottom: 1px;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+}

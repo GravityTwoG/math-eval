@@ -31,8 +31,8 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
         if (opStack.length >= 2) {
           pseudoCode.push({
             operation: word,
-            operand1: opStack.pop() as string,
             operand2: opStack.pop() as string,
+            operand1: opStack.pop() as string,
           });
           opStack.push('POP');
         } else {
@@ -44,7 +44,7 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
         break;
       }
       default:
-        if (word.match(/[0-9]+/)) {
+        if (word.match(/[0-9.]+/)) {
           opStack.push(word);
         } else {
           return {

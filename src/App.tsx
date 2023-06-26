@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
-import { Input } from './components/Input';
-import { getLexems, LexerResult } from './lexer';
-import { ParserResult, parse } from './parser';
-import { Command, toPseudoCode } from './toPseudoCode';
-import { evaluate } from './evaluator';
+import { getLexems, LexerResult } from './domain/lexer';
+import { ParserResult, parse } from './domain/parser';
+import { Command, toPseudoCode } from './domain/toPseudoCode';
+import { evaluate } from './domain/evaluator';
+
+import { TextArea } from './components/TextArea';
+import { TokensList } from './components/TokensList';
+import { PostfixView } from './components/PostfixView';
+import { PseudoCodeView } from './components/PseudoCodeView';
 
 export function App() {
   const [expression, setExpression] = useState('');
@@ -65,54 +69,39 @@ export function App() {
   }, [expression]);
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       <h1>Math Expression Evaluator</h1>
 
-      <div style={{ maxWidth: '1200px', width: '100%' }}>
-        <Input
+      <div style={{ width: '100%' }}>
+        <TextArea
           value={expression}
           onChange={(v) => setExpression(v)}
-          pattern="(([0-9]+)|([+*\^\-\/\(\) \.]))+"
-          type="text"
+          pattern={/[0-9. +*\-/()]+/g}
           style={{ width: '100%' }}
+          rows={3}
+          placeholder="2 + 2 * 2"
+          autoFocus
+          isValid={parseResult.isValid}
         />
-      </div>
-
-      <h2>Lexer Result</h2>
-      {!lexerResult.isValid && <p>Error: {lexerResult.message}</p>}
-      <p>
-        Tokens:{' '}
-        {lexerResult.lexems.map((token, idx) => (
-          <span key={idx}>
-            {token.type}: {token.value}{' '}
-          </span>
-        ))}
-      </p>
-
-      <h2>Parser Result</h2>
-      {!parseResult.isValid && <p>Error: {parseResult.message}</p>}
-      <p>Postfix Notation: {parseResult.postfix.join(' ')}</p>
-
-      <h2>PseudoCode</h2>
-      <p>Is valid: {intermediate.isValid.toString()}</p>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <table>
-          <tbody>
-            {intermediate.pseudoCode.map((command, idx) => (
-              <tr key={idx}>
-                <td>{idx + 1}</td>
-                <td>{command.operation}</td>
-                <td>{command.operand1}</td>
-                <td>{command.operand2}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
 
       <h2>Result</h2>
       {!evaluationResult.isValid && <p>Error: {evaluationResult.message}</p>}
       <p>{evaluationResult.result}</p>
+
+      <h2>Lexer Result</h2>
+      {!lexerResult.isValid && <p>Error: {lexerResult.message}</p>}
+      <TokensList tokens={lexerResult.lexems} />
+
+      <h2>Parser Result</h2>
+      {!parseResult.isValid && <p>Error: {parseResult.message}</p>}
+      <PostfixView postfix={parseResult.postfix} />
+
+      <h2>PseudoCode</h2>
+      <p>Is valid: {intermediate.isValid.toString()}</p>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <PseudoCodeView pseudoCode={intermediate.pseudoCode} />
+      </div>
     </div>
   );
 }

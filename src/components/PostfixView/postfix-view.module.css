@@ -1,0 +1,65 @@
+.postfix-tree {
+  display: inline-block;
+  margin: 1rem 0;
+  border-radius: 3px;
+  background-color: rgb(59, 59, 59);
+}
+
+.postfix-node-view {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0px 4px 0px 0px;
+  border-radius: 3px;
+  background: transparent;
+  font-size: 16px;
+  position: relative;
+  transition: background-color 0.1s linear;
+}
+
+.postfix-node-view-operand {
+  display: inline-block;
+  padding: 0px 6px;
+  font-size: 16px;
+  border-radius: 3px;
+  z-index: -1;
+  background: transparent;
+  transition: background-color 0.1s linear;
+  pointer-events: none;
+}
+
+.postfix-node-view-operand1,
+.postfix-node-view-operand2 {
+  z-index: 1;
+}
+
+.postfix-node-hover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  border: 1px solid #000;
+  border-radius: 3px;
+  transition: background-color 0.1s linear, border-color 0.1s linear;
+}
+
+.postfix-node-hover:hover {
+  background-color: rgba(170, 170, 170, 0.2);
+  border-color: rgba(238, 234, 234, 0.6);
+}
+
+.postfix-node-hover:hover ~ .postfix-node-view-operand1 {
+  background-color: rgba(255, 77, 106, 0.9);
+}
+.postfix-node-hover:hover ~ .postfix-node-view-operand2 {
+  background-color: rgba(44, 109, 194, 0.9);
+}
+
+.postfix-node-view > .postfix-node-view-operation {
+  display: inline-block;
+  font-size: 14px;
+}

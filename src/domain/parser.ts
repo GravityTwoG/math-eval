@@ -43,6 +43,14 @@ export function parse(tokens: Token[]): ParserResult {
 
   let index = 0;
   let token = tokens[index];
+
+  function getNextToken() {
+    if (index < tokens.length) {
+      index++;
+      token = tokens[index];
+    }
+  }
+
   while (states.length) {
     const currentState = states.pop();
 
@@ -73,7 +81,11 @@ export function parse(tokens: Token[]): ParserResult {
         } else if (token.type === TokenType.SUB) {
           postfix.push('0');
           opStack.push(TokenType.SUB);
-          states.push(TokenType.SUB); // get next token
+          states.pop();
+          states.push('EndExprEnd');
+          states.push('BegExpr');
+          // states.push(TokenType.SUB); // get next token
+          getNextToken();
         } else {
           return {
             isValid: false,
@@ -86,17 +98,13 @@ export function parse(tokens: Token[]): ParserResult {
 
       case 'BegExpr': {
         if (token.type === TokenType.CONST) {
-          states.push(TokenType.CONST); // get next token
+          // states.push(TokenType.CONST); // get next token
           postfix.push(token.value);
+          getNextToken();
         } else if (token.type === TokenType.PAREN_OPEN) {
-          states.push(
-            'ParensExprEnd',
-            TokenType.PAREN_CLOSE,
-            'Expression',
-            TokenType.PAREN_OPEN
-          );
-
+          states.push('ParensExprEnd', TokenType.PAREN_CLOSE, 'Expression');
           opStack.push(token.type);
+          getNextToken();
         } else {
           return {
             isValid: false,
