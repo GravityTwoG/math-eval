@@ -1,7 +1,12 @@
 import { TokenType } from './lexer';
 
 export type Command = {
-  operation: string;
+  operation:
+    | TokenType.ADD
+    | TokenType.SUB
+    | TokenType.MUL
+    | TokenType.DIV
+    | TokenType.POW;
   operand1: string;
   operand2: string;
 };

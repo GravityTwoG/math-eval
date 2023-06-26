@@ -5,6 +5,7 @@ import { Input } from './components/Input';
 import { getLexems, Token } from './lexer';
 import { ParseResult, parse } from './parser';
 import { Command, toPseudoCode } from './toPseudoCode';
+import { evaluate } from './evaluator';
 
 export function App() {
   const [expression, setExpression] = useState('');
@@ -21,13 +22,20 @@ export function App() {
     isValid: true,
     pseudoCode: [],
   });
+  const [result, setResult] = useState(0);
 
   useEffect(() => {
     const lexems = getLexems(expression);
     setTokens(lexems);
     const parseRes = parse(lexems);
     setParseResult(parseRes);
-    setIntermediate(toPseudoCode(parseRes.postfix));
+    const inter = toPseudoCode(parseRes.postfix);
+    setIntermediate(inter);
+    if (inter.isValid) {
+      setResult(evaluate(inter.pseudoCode));
+    } else {
+      setResult(0);
+    }
   }, [expression]);
 
   return (
@@ -74,6 +82,9 @@ export function App() {
           </tbody>
         </table>
       </div>
+
+      <h2>Result</h2>
+      <p>{result}</p>
     </div>
   );
 }
