@@ -30,7 +30,8 @@ export function parse(tokens: Token[]): ParseResult {
     | 'ExpressionEnd'
     | 'BegExpr'
     | 'EndExpr'
-    | 'Parens'
+    | 'ParensExprEnd'
+    | 'EndExprEnd'
     | TokenType.ADD
     | TokenType.SUB
     | TokenType.MUL
@@ -58,7 +59,7 @@ export function parse(tokens: Token[]): ParseResult {
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}:${token.value}" in Expression`,
-            postfix: [],
+            postfix,
           };
         }
         break;
@@ -78,7 +79,7 @@ export function parse(tokens: Token[]): ParseResult {
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}:${token.value}" in ExpressionStart`,
-            postfix: [],
+            postfix,
           };
         }
         break;
@@ -90,7 +91,7 @@ export function parse(tokens: Token[]): ParseResult {
           postfix.push(token.value);
         } else if (token.type === TokenType.PAREN_OPEN) {
           states.push(
-            'Parens',
+            'ParensExprEnd',
             TokenType.PAREN_CLOSE,
             'Expression',
             TokenType.PAREN_OPEN
@@ -101,7 +102,7 @@ export function parse(tokens: Token[]): ParseResult {
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}: ${token.value}" in BegExpr`,
-            postfix: [],
+            postfix,
           };
         }
         break;
@@ -117,21 +118,27 @@ export function parse(tokens: Token[]): ParseResult {
         ) {
           states.push('EndExpr');
         } else if (token.type === TokenType.PAREN_CLOSE) {
-          if (peek(states) === TokenType.PAREN_CLOSE) {
+          if (
+            peek(states) === TokenType.PAREN_CLOSE ||
+            states[states.length - 2] === TokenType.PAREN_CLOSE
+          ) {
             continue;
           }
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}:${token.value}" in ExpressionEnd`,
-            postfix: [],
+            postfix,
           };
-        } else if (token.type === TokenType.EOF && states.length === 0) {
+        } else if (
+          token.type === TokenType.EOF &&
+          peek(states) === 'EndExprEnd'
+        ) {
           continue;
         } else {
           return {
             isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in ExpressionEnd`,
-            postfix: [],
+            message: `Unexpected token: "${token.type}:${token.value}" in ExpressionEnd2`,
+            postfix,
           };
         }
         break;
@@ -145,6 +152,7 @@ export function parse(tokens: Token[]): ParseResult {
           token.type === TokenType.MUL ||
           token.type === TokenType.POW
         ) {
+          states.push('EndExprEnd');
           states.push('Expression');
 
           if (
@@ -161,15 +169,27 @@ export function parse(tokens: Token[]): ParseResult {
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}:${token.value}" in EndExpr`,
-            postfix: [],
+            postfix,
           };
         }
 
         break;
       }
-      case 'Parens': {
+
+      case 'ParensExprEnd': {
         if (opStack.length && peek(opStack) === TokenType.PAREN_OPEN) {
           opStack.pop();
+        }
+        break;
+      }
+
+      case 'EndExprEnd': {
+        if (opStack.length) {
+          if (peek(opStack) === TokenType.PAREN_OPEN) {
+            opStack.pop();
+          } else {
+            postfix.push(opStack.pop() as string);
+          }
         }
         break;
       }
@@ -180,7 +200,7 @@ export function parse(tokens: Token[]): ParseResult {
           return {
             isValid: false,
             message: `Invalid token: ${token.value}, expected: ${currentState}`,
-            postfix: [],
+            postfix,
           };
         }
 
