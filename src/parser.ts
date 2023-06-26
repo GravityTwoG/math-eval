@@ -8,8 +8,8 @@ import { Token, TokenType } from './lexer';
 // BegExpr: ( "(" Expression ")" )
 // BegExpr starts with: CONST, "("
 
-// EndExpr: [+-/*^] Expression
-// EndExpr starts with: "+", "-", "/", "*", "^"
+// EndExpr: [+-/*] Expression
+// EndExpr starts with: "+", "-", "/", "*"
 
 export type ParserResult = {
   isValid: boolean;
@@ -36,7 +36,6 @@ export function parse(tokens: Token[]): ParserResult {
     | TokenType.SUB
     | TokenType.MUL
     | TokenType.DIV
-    | TokenType.POW
     | TokenType.PAREN_OPEN
     | TokenType.PAREN_CLOSE
     | TokenType.CONST
@@ -113,8 +112,7 @@ export function parse(tokens: Token[]): ParserResult {
           token.type === TokenType.ADD ||
           token.type === TokenType.SUB ||
           token.type === TokenType.DIV ||
-          token.type === TokenType.MUL ||
-          token.type === TokenType.POW
+          token.type === TokenType.MUL
         ) {
           states.push('EndExpr');
         } else if (token.type === TokenType.PAREN_CLOSE) {
@@ -147,8 +145,7 @@ export function parse(tokens: Token[]): ParserResult {
           token.type === TokenType.ADD ||
           token.type === TokenType.SUB ||
           token.type === TokenType.DIV ||
-          token.type === TokenType.MUL ||
-          token.type === TokenType.POW
+          token.type === TokenType.MUL
         ) {
           states.push('EndExprEnd');
           states.push('Expression');
@@ -232,7 +229,6 @@ const operationPriorities = {
   [TokenType.SUB]: 5,
   [TokenType.MUL]: 10,
   [TokenType.DIV]: 10,
-  [TokenType.POW]: 15,
 } as { [key: string]: number };
 
 function getPriority(operation: string) {

@@ -3,7 +3,6 @@ export enum TokenType {
   SUB = 'SUB',
   MUL = 'MUL',
   DIV = 'DIV',
-  POW = 'POW',
   CONST = 'CONST',
   PAREN_OPEN = 'PAREN_OPEN',
   PAREN_CLOSE = 'PAREN_CLOSE',
@@ -72,10 +71,6 @@ export function getLexems(content: string): LexerResult {
         }
         case '/': {
           lexems.push({ type: TokenType.DIV, value: char });
-          break;
-        }
-        case '^': {
-          lexems.push({ type: TokenType.POW, value: char });
           break;
         }
         case '(': {

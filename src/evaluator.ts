@@ -34,14 +34,6 @@ export function evaluate(commands: Command[]) {
           extractOperand(command.operand2) / extractOperand(command.operand1)
         );
         break;
-      case TokenType.POW:
-        stack.push(
-          Math.pow(
-            extractOperand(command.operand2),
-            extractOperand(command.operand1)
-          )
-        );
-        break;
       case 'PUSH':
         stack.push(extractOperand(command.operand1));
         break;

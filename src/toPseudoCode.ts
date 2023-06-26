@@ -6,7 +6,6 @@ export type Command = {
     | TokenType.SUB
     | TokenType.MUL
     | TokenType.DIV
-    | TokenType.POW
     | 'PUSH';
   operand1: string;
   operand2: string;
@@ -28,8 +27,7 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
       case TokenType.ADD:
       case TokenType.SUB:
       case TokenType.MUL:
-      case TokenType.DIV:
-      case TokenType.POW: {
+      case TokenType.DIV: {
         if (opStack.length >= 2) {
           pseudoCode.push({
             operation: word,
