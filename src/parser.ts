@@ -131,7 +131,7 @@ export function parse(tokens: Token[]): ParseResult {
           };
         } else if (
           token.type === TokenType.EOF &&
-          peek(states) === 'EndExprEnd'
+          (states.length === 0 || peek(states) === 'EndExprEnd')
         ) {
           continue;
         } else {
