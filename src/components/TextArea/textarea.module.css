@@ -6,11 +6,11 @@
   border: 2px solid #d8d8d8;
   border-radius: 3px;
   outline: none;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .teaxarea:hover {
-  border-color: var(--color-yellow-bg);
+  border-color: var(--color-violet-bg);
 }
 
 .teaxarea:focus {

@@ -1,10 +1,10 @@
-import { TokenType } from './lexer';
+import { ArithmeticToken, Token, TokenType } from './lexer';
 
-export function isArithmetic(type: TokenType) {
+export function isArithmetic(token: Token): token is ArithmeticToken {
   return (
-    type === TokenType.ADD ||
-    type === TokenType.SUB ||
-    type === TokenType.MUL ||
-    type === TokenType.DIV
+    token.type === TokenType.ADD ||
+    token.type === TokenType.SUB ||
+    token.type === TokenType.MUL ||
+    token.type === TokenType.DIV
   );
 }

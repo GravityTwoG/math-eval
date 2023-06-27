@@ -26,7 +26,7 @@ const TokenItem = ({ token }: TokenItemProps) => {
   return (
     <li
       className={classes['token-item']}
-      data-token-type={isArithmetic(token.type) ? 'ARITHMETIC' : token.type}
+      data-token-type={isArithmetic(token) ? 'ARITHMETIC' : token.type}
     >
       <span className={classes['token-value']}>{token.value}</span>
       <span className={classes['token-type']}>{token.type}</span>

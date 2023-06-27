@@ -16,8 +16,8 @@ export const PostfixView = (props: PostfixViewProps) => {
       <div>{props.postfix.join(' ')}</div>
 
       <div className={classes['postfix-tree']}>
-        {t.map((p) => (
-          <PostfixNodeView postfix={p} />
+        {t.map((p, idx) => (
+          <PostfixNodeView postfix={p} key={idx} />
         ))}
       </div>
     </div>

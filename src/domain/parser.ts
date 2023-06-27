@@ -1,3 +1,4 @@
+import { isArithmetic } from './isArithmetic';
 import { Token, TokenType } from './lexer';
 
 // Expression: ( (-)? BegExpr EndExpr? )
@@ -18,14 +19,16 @@ export type ParserResult = {
 };
 
 export function parse(tokens: Token[]): ParserResult {
-  if (tokens.length === 0 || tokens[0].type === TokenType.EOF) {
+  if (tokens.length === 0 || tokens[tokens.length - 1].type !== TokenType.EOF) {
+    return { isValid: false, message: 'Token EOF not found', postfix: [] };
+  }
+  if (tokens.length === 1 && tokens[0].type === TokenType.EOF) {
     return { isValid: true, message: '', postfix: [] };
   }
 
   const postfix: string[] = [];
   const opStack: string[] = [];
   const states: (
-    | 'ExpressionStart'
     | 'Expression'
     | 'ExpressionEnd'
     | 'BegExpr'
@@ -58,38 +61,18 @@ export function parse(tokens: Token[]): ParserResult {
       case 'Expression': {
         if (
           token.type === TokenType.CONST ||
-          token.type === TokenType.SUB ||
           token.type === TokenType.PAREN_OPEN
         ) {
-          states.push('ExpressionEnd', 'BegExpr', 'ExpressionStart');
-        } else {
-          return {
-            isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in Expression`,
-            postfix,
-          };
-        }
-        break;
-      }
-
-      case 'ExpressionStart': {
-        if (
-          token.type === TokenType.CONST ||
-          token.type === TokenType.PAREN_OPEN
-        ) {
-          continue;
+          states.push('ExpressionEnd', 'BegExpr');
         } else if (token.type === TokenType.SUB) {
+          states.push('ExpressionEnd', 'EndExprEnd', 'BegExpr');
           postfix.push('0');
           opStack.push(TokenType.SUB);
-          states.pop();
-          states.push('EndExprEnd');
-          states.push('BegExpr');
-          // states.push(TokenType.SUB); // get next token
           getNextToken();
         } else {
           return {
             isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in ExpressionStart`,
+            message: `Unexpected token: "${token.type}:${token.value}" in Expression`,
             postfix,
           };
         }
@@ -106,6 +89,7 @@ export function parse(tokens: Token[]): ParserResult {
           opStack.push(token.type);
           getNextToken();
         } else {
+          // theoretically unreachable
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}: ${token.value}" in BegExpr`,
@@ -116,12 +100,7 @@ export function parse(tokens: Token[]): ParserResult {
       }
 
       case 'ExpressionEnd': {
-        if (
-          token.type === TokenType.ADD ||
-          token.type === TokenType.SUB ||
-          token.type === TokenType.DIV ||
-          token.type === TokenType.MUL
-        ) {
+        if (isArithmetic(token)) {
           states.push('EndExpr');
         } else if (token.type === TokenType.PAREN_CLOSE) {
           if (states.find((s) => s === TokenType.PAREN_CLOSE)) {
@@ -149,26 +128,22 @@ export function parse(tokens: Token[]): ParserResult {
       }
 
       case 'EndExpr': {
-        if (
-          token.type === TokenType.ADD ||
-          token.type === TokenType.SUB ||
-          token.type === TokenType.DIV ||
-          token.type === TokenType.MUL
-        ) {
+        if (isArithmetic(token)) {
           states.push('EndExprEnd');
           states.push('Expression');
 
-          if (
+          while (
             opStack.length &&
             getPriority(peek(opStack)) >= getPriority(token.type)
           ) {
-            // operation with higher priority goes first
+            // operations with higher priority goes first
             postfix.push(opStack.pop() as string);
           }
 
-          states.push(token.type);
           opStack.push(token.type);
+          getNextToken();
         } else {
+          // theoretically unreachable
           return {
             isValid: false,
             message: `Unexpected token: "${token.type}:${token.value}" in EndExpr`,
@@ -207,20 +182,16 @@ export function parse(tokens: Token[]): ParserResult {
           };
         }
 
-        if (index < tokens.length) {
-          index++;
-          token = tokens[index];
-        }
+        getNextToken();
         break;
       }
     }
   }
 
   while (opStack.length) {
-    if (peek(opStack) == TokenType.PAREN_OPEN) {
-      opStack.pop();
-    } else {
-      postfix.push(opStack.pop() as string);
+    const op = opStack.pop();
+    if (op !== undefined && op !== TokenType.PAREN_OPEN) {
+      postfix.push(op);
     }
   }
 

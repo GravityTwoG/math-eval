@@ -37,34 +37,38 @@ export function App() {
   }>({ isValid: false, message: 'PseudoCode is invalid', result: 0 });
 
   useEffect(() => {
-    const lexRes = getLexems(expression);
-    setLexerResult(lexRes);
-    const parseRes = parse(lexRes.lexems);
-    setParseResult(parseRes);
+    try {
+      const lexRes = getLexems(expression);
+      setLexerResult(lexRes);
+      const parseRes = parse(lexRes.lexems);
+      setParseResult(parseRes);
 
-    if (!parseRes.isValid) {
-      setIntermediate({
-        isValid: false,
-        pseudoCode: [],
-      });
-      setEvaluationResult({
-        isValid: false,
-        message: 'PseudoCode is invalid',
-        result: 0,
-      });
-    } else {
-      const inter = toPseudoCode(parseRes.postfix);
-      setIntermediate(inter);
-
-      if (!inter.isValid) {
+      if (!parseRes.isValid) {
+        setIntermediate({
+          isValid: false,
+          pseudoCode: [],
+        });
         setEvaluationResult({
           isValid: false,
-          message: 'PseudoCode is invalid',
-          result: 0,
+          message: '',
+          result: NaN,
         });
       } else {
-        setEvaluationResult(evaluate(inter.pseudoCode));
+        const inter = toPseudoCode(parseRes.postfix);
+        setIntermediate(inter);
+
+        if (!inter.isValid) {
+          setEvaluationResult({
+            isValid: false,
+            message: '',
+            result: NaN,
+          });
+        } else {
+          setEvaluationResult(evaluate(inter.pseudoCode));
+        }
       }
+    } catch (error) {
+      alert(error);
     }
   }, [expression]);
 
@@ -86,8 +90,10 @@ export function App() {
       </div>
 
       <h2>Result</h2>
-      {!evaluationResult.isValid && <p>Error: {evaluationResult.message}</p>}
-      <p>{evaluationResult.result}</p>
+      {!evaluationResult.isValid && expression.trim() !== '' && (
+        <p>Error: {evaluationResult.message}</p>
+      )}
+      <p>{evaluationResult.result.toLocaleString()}</p>
 
       <h2>Lexer Result</h2>
       {!lexerResult.isValid && <p>Error: {lexerResult.message}</p>}

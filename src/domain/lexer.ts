@@ -11,6 +11,11 @@ export enum TokenType {
 
 export type Token = { type: TokenType; value: string };
 
+export type ArithmeticToken = {
+  type: TokenType.ADD | TokenType.SUB | TokenType.MUL | TokenType.DIV;
+  value: string;
+};
+
 export type LexerResult = {
   isValid: boolean;
   message: string;
