@@ -1,7 +1,8 @@
 import classes from './tokenslist.module.css';
 
-import { Token } from '../../domain/lexer';
-import { isArithmetic } from '../../domain/isArithmetic';
+import { Token, isArithmetic } from '../../domain';
+
+import { Text } from '../Text';
 
 export type TokensListProps = {
   tokens: Token[];
@@ -10,7 +11,9 @@ export type TokensListProps = {
 export const TokensList = (props: TokensListProps) => {
   return (
     <div>
-      Tokens:
+      <Text>Lexer translates expression to sequence of tokens.</Text>
+
+      <Text>Tokens:</Text>
       <ul className={classes['tokens-list']}>
         {props.tokens.map((token, idx) => (
           <TokenItem key={idx} token={token} />

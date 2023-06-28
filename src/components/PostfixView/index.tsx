@@ -1,22 +1,35 @@
 import { useMemo } from 'react';
 import classes from './postfix-view.module.css';
 
-import { TokenType } from '../../domain/lexer';
+import { TokenType } from '../../domain';
+
+import { Text } from '../Text';
 
 export type PostfixViewProps = {
   postfix: string[];
 };
 
 export const PostfixView = (props: PostfixViewProps) => {
-  const t = useMemo(() => postfixToTree(props.postfix), [props.postfix]);
+  const tree = useMemo(() => postfixToTree(props.postfix), [props.postfix]);
 
   return (
     <div>
-      <p>Postfix Notation:</p>
+      <Text>
+        Parser checks validity of sequence of tokens and translates it to{' '}
+        <strong>postfix notation</strong>.
+      </Text>
+
+      <Text>
+        <strong>Reverse Polish notation (RPN)</strong>, also known as{' '}
+        <strong>postfix notation</strong>, is a mathematical notation in which
+        operators follow their operands. It does not need any parentheses as
+        long as each operator has a fixed number of operands.
+      </Text>
+      <Text>Postfix Notation:</Text>
       <div>{props.postfix.join(' ')}</div>
 
       <div className={classes['postfix-tree']}>
-        {t.map((p, idx) => (
+        {tree.map((p, idx) => (
           <PostfixNodeView postfix={p} key={idx} />
         ))}
       </div>

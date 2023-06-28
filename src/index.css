@@ -22,6 +22,14 @@
   --color-violet-text: #fff;
 }
 
+#root {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -46,4 +54,5 @@ h1 {
 h2 {
   font-size: clamp(1rem, 5vw, 2em);
   line-height: 1.1;
+  margin: 1rem 0px;
 }

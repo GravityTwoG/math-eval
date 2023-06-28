@@ -1,20 +1,14 @@
-export enum TokenType {
-  ADD = 'ADD',
-  SUB = 'SUB',
-  MUL = 'MUL',
-  DIV = 'DIV',
-  CONST = 'CONST',
-  PAREN_OPEN = 'PAREN_OPEN',
-  PAREN_CLOSE = 'PAREN_CLOSE',
-  EOF = 'EOF',
-}
-
-export type Token = { type: TokenType; value: string };
-
-export type ArithmeticToken = {
-  type: TokenType.ADD | TokenType.SUB | TokenType.MUL | TokenType.DIV;
-  value: string;
-};
+import {
+  Token,
+  TokenADD,
+  TokenDIV,
+  TokenEOF,
+  TokenMUL,
+  TokenPAREN_CLOSE,
+  TokenPAREN_OPEN,
+  TokenSUB,
+  TokenType,
+} from '../types';
 
 export type LexerResult = {
   isValid: boolean;
@@ -37,11 +31,11 @@ export function getLexems(content: string): LexerResult {
       isConst = true;
     } else if (char === '.') {
       if (!isConst) {
-        lexems.push({ type: TokenType.EOF, value: '' });
+        lexems.push(TokenEOF);
         return { isValid: false, message: 'Unexpected symbol "."', lexems };
       }
       if (wasDot) {
-        lexems.push({ type: TokenType.EOF, value: '' });
+        lexems.push(TokenEOF);
         return { isValid: false, message: 'Unexpected symbol "."', lexems };
       }
       wasDot = true;
@@ -51,7 +45,7 @@ export function getLexems(content: string): LexerResult {
     } else {
       if (isConst) {
         if (constant[constant.length - 1] === '.') {
-          lexems.push({ type: TokenType.EOF, value: '' });
+          lexems.push(TokenEOF);
           return { isValid: false, message: 'Unexpected symbol "."', lexems };
         }
 
@@ -62,28 +56,28 @@ export function getLexems(content: string): LexerResult {
       }
 
       switch (char) {
-        case '+': {
-          lexems.push({ type: TokenType.ADD, value: char });
+        case TokenADD.value: {
+          lexems.push(TokenADD);
           break;
         }
-        case '-': {
-          lexems.push({ type: TokenType.SUB, value: char });
+        case TokenSUB.value: {
+          lexems.push(TokenSUB);
           break;
         }
-        case '*': {
-          lexems.push({ type: TokenType.MUL, value: char });
+        case TokenMUL.value: {
+          lexems.push(TokenMUL);
           break;
         }
-        case '/': {
-          lexems.push({ type: TokenType.DIV, value: char });
+        case TokenDIV.value: {
+          lexems.push(TokenDIV);
           break;
         }
-        case '(': {
-          lexems.push({ type: TokenType.PAREN_OPEN, value: char });
+        case TokenPAREN_OPEN.value: {
+          lexems.push(TokenPAREN_OPEN);
           break;
         }
-        case ')': {
-          lexems.push({ type: TokenType.PAREN_CLOSE, value: char });
+        case TokenPAREN_CLOSE.value: {
+          lexems.push(TokenPAREN_CLOSE);
           break;
         }
       }
@@ -92,7 +86,7 @@ export function getLexems(content: string): LexerResult {
 
   if (isConst) {
     if (constant[constant.length - 1] === '.') {
-      lexems.push({ type: TokenType.EOF, value: '' });
+      lexems.push(TokenEOF);
       return { isValid: false, message: 'Unexpected symbol "."', lexems };
     }
 
@@ -100,7 +94,7 @@ export function getLexems(content: string): LexerResult {
     isConst = false;
     constant = '';
   }
-  lexems.push({ type: TokenType.EOF, value: '' });
+  lexems.push(TokenEOF);
 
   return { isValid: true, message: '', lexems };
 }

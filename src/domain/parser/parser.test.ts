@@ -1,9 +1,9 @@
 import { describe, expect, test } from '@jest/globals';
 
 import { parse } from './parser';
-import { TokenType } from './lexer';
 
 import {
+  TokenType,
   TokenADD,
   TokenDIV,
   TokenEOF,
@@ -11,7 +11,7 @@ import {
   TokenPAREN_CLOSE,
   TokenPAREN_OPEN,
   TokenSUB,
-} from './tests.shared';
+} from '../types';
 
 describe('Parser', () => {
   test('EOF must be provided', () => {

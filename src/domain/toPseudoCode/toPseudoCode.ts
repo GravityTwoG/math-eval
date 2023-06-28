@@ -1,4 +1,4 @@
-import { TokenType } from './lexer';
+import { TokenType } from '../types';
 
 export type Command = {
   operation:
@@ -13,11 +13,11 @@ export type Command = {
 
 export type ToPseudoCodeResult = {
   isValid: boolean;
-  pseudoCode: Command[];
+  commands: Command[];
 };
 
 export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
-  const pseudoCode: Command[] = [];
+  const commands: Command[] = [];
   const opStack: string[] = [];
 
   for (let i = 0; i < postfix.length; i++) {
@@ -29,7 +29,7 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
       case TokenType.MUL:
       case TokenType.DIV: {
         if (opStack.length >= 2) {
-          pseudoCode.push({
+          commands.push({
             operation: word,
             operand2: opStack.pop() as string,
             operand1: opStack.pop() as string,
@@ -38,7 +38,7 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
         } else {
           return {
             isValid: false,
-            pseudoCode,
+            commands,
           };
         }
         break;
@@ -49,7 +49,7 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
         } else {
           return {
             isValid: false,
-            pseudoCode,
+            commands,
           };
         }
     }
@@ -58,7 +58,7 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
   if (opStack.length && opStack[opStack.length - 1] !== 'POP') {
     return {
       isValid: true,
-      pseudoCode: [
+      commands: [
         {
           operation: 'PUSH',
           operand1: opStack.shift() as string,
@@ -68,5 +68,5 @@ export function toPseudoCode(postfix: string[]): ToPseudoCodeResult {
     };
   }
 
-  return { isValid: true, pseudoCode };
+  return { isValid: true, commands };
 }

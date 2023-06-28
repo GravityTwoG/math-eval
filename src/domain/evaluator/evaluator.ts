@@ -1,5 +1,5 @@
-import { TokenType } from './lexer';
-import { Command } from './toPseudoCode';
+import { TokenType } from '../types';
+import { Command } from '../toPseudoCode/toPseudoCode';
 
 export type EvaluationResult = {
   isValid: boolean;

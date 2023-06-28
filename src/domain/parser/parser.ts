@@ -1,5 +1,5 @@
-import { isArithmetic } from './isArithmetic';
-import { Token, TokenType } from './lexer';
+import { isArithmetic } from '../isArithmetic';
+import { Token, TokenType } from '../types';
 
 // Expression: ( (-)? BegExpr EndExpr? )
 // Expression starts with: "-", "(", CONST

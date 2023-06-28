@@ -1,113 +1,99 @@
 import { useState, useEffect } from 'react';
-import './App.css';
+import classes from './app.module.css';
 
-import { getLexems, LexerResult } from './domain/lexer';
-import { ParserResult, parse } from './domain/parser';
-import { Command, toPseudoCode } from './domain/toPseudoCode';
-import { evaluate } from './domain/evaluator';
+import { evaluateExpression } from './domain';
 
 import { TextArea } from './components/TextArea';
 import { TokensList } from './components/TokensList';
 import { PostfixView } from './components/PostfixView';
 import { PseudoCodeView } from './components/PseudoCodeView';
+import { Text } from './components/Text';
 
 export function App() {
   const [expression, setExpression] = useState('');
-  const [lexerResult, setLexerResult] = useState<LexerResult>({
-    isValid: true,
-    message: 'Empty',
-    lexems: [],
+  const [result, setResult] = useState<ReturnType<typeof evaluateExpression>>({
+    lexer: {
+      isValid: true,
+      message: '',
+      lexems: [],
+    },
+    parser: {
+      isValid: true,
+      message: '',
+      postfix: [],
+    },
+    pseudoCode: { isValid: false, commands: [] },
+    evaluated: { isValid: false, message: '', result: NaN },
   });
-  const [parseResult, setParseResult] = useState<ParserResult>({
-    isValid: true,
-    message: '',
-    postfix: [],
-  });
-  const [intermediate, setIntermediate] = useState<{
-    isValid: boolean;
-    pseudoCode: Command[];
-  }>({
-    isValid: false,
-    pseudoCode: [],
-  });
-  const [evaluationResult, setEvaluationResult] = useState<{
-    isValid: boolean;
-    message: string;
-    result: number;
-  }>({ isValid: false, message: 'PseudoCode is invalid', result: 0 });
 
   useEffect(() => {
     try {
-      const lexRes = getLexems(expression);
-      setLexerResult(lexRes);
-      const parseRes = parse(lexRes.lexems);
-      setParseResult(parseRes);
-
-      if (!parseRes.isValid) {
-        setIntermediate({
-          isValid: false,
-          pseudoCode: [],
-        });
-        setEvaluationResult({
-          isValid: false,
-          message: '',
-          result: NaN,
-        });
-      } else {
-        const inter = toPseudoCode(parseRes.postfix);
-        setIntermediate(inter);
-
-        if (!inter.isValid) {
-          setEvaluationResult({
-            isValid: false,
-            message: '',
-            result: NaN,
-          });
-        } else {
-          setEvaluationResult(evaluate(inter.pseudoCode));
-        }
-      }
+      setResult(evaluateExpression(expression));
     } catch (error) {
       alert(error);
     }
   }, [expression]);
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className={classes.app}>
       <h1>Math Expression Evaluator</h1>
 
-      <div style={{ width: '100%' }}>
+      <div className={classes['expression-input']}>
         <TextArea
           value={expression}
           onChange={(v) => setExpression(v)}
           pattern={/[0-9. +*\-/()]+/g}
-          style={{ width: '100%' }}
+          style={{ width: '100%', maxWidth: '900px' }}
           rows={3}
           placeholder="2 + 2 * 2"
           autoFocus
-          isValid={parseResult.isValid}
+          isValid={result.parser.isValid}
         />
       </div>
 
       <h2>Result</h2>
-      {!evaluationResult.isValid && expression.trim() !== '' && (
-        <p>Error: {evaluationResult.message}</p>
+      {!result.evaluated.isValid && expression.trim() !== '' && (
+        <Text>Error: {result.evaluated.message}</Text>
       )}
-      <p>{evaluationResult.result.toLocaleString()}</p>
+      <Text>{result.evaluated.result.toLocaleString()}</Text>
 
       <h2>Lexer Result</h2>
-      {!lexerResult.isValid && <p>Error: {lexerResult.message}</p>}
-      <TokensList tokens={lexerResult.lexems} />
+      {!result.lexer.isValid && <Text>Error: {result.lexer.message}</Text>}
+      <TokensList tokens={result.lexer.lexems} />
 
       <h2>Parser Result</h2>
-      {!parseResult.isValid && <p>Error: {parseResult.message}</p>}
-      <PostfixView postfix={parseResult.postfix} />
+      {!result.parser.isValid && <Text>Error: {result.parser.message}</Text>}
+      <PostfixView postfix={result.parser.postfix} />
 
-      <h2>PseudoCode</h2>
-      <p>Is valid: {intermediate.isValid.toString()}</p>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <PseudoCodeView pseudoCode={intermediate.pseudoCode} />
-      </div>
+      <h2>Pseudocode</h2>
+      {!result.pseudoCode.isValid && (
+        <Text>Is valid: {result.pseudoCode.isValid.toString()}</Text>
+      )}
+
+      <PseudoCodeView pseudoCode={result.pseudoCode.commands} />
+
+      <h2>Result</h2>
+      {!result.evaluated.isValid && expression.trim() !== '' && (
+        <Text>Error: {result.evaluated.message}</Text>
+      )}
+      <Text>
+        Then pseudocode is executed one by one while saving results of executed
+        commands in execution stack. If command requires an execution result of
+        previous command (POP), then value of operand is extracted from the
+        execution stack.
+      </Text>
+      <Text>{result.evaluated.result.toLocaleString()}</Text>
+
+      <footer className={classes.footer}>
+        Made by{' '}
+        <a
+          href="https://github.com/GravityTwoG/math-eval"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GravityTwoG
+        </a>
+      </footer>
     </div>
   );
 }

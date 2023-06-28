@@ -2,7 +2,7 @@ import { describe, test, expect } from '@jest/globals';
 
 import { evaluate } from './evaluator';
 
-import { TokenADD, TokenDIV, TokenMUL, TokenSUB } from './tests.shared';
+import { TokenADD, TokenDIV, TokenMUL, TokenSUB } from '../types';
 
 describe('Evaluator', () => {
   test('Empty code is invalid', () => {

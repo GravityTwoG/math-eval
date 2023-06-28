@@ -1,4 +1,12 @@
 .pseudocode-view {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pseudocode-container {
   max-height: 500px;
   border-radius: 3px;
   overflow: auto;

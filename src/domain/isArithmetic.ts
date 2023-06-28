@@ -1,4 +1,4 @@
-import { ArithmeticToken, Token, TokenType } from './lexer';
+import { ArithmeticToken, Token, TokenType } from './types';
 
 export function isArithmetic(token: Token): token is ArithmeticToken {
   return (
