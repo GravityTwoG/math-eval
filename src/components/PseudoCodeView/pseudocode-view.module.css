@@ -33,4 +33,6 @@
 .pseudocode-command > td:nth-child(4) {
   background-color: var(--color-yellow-bg);
   color: var(--color-yellow-text);
+  word-wrap: break-word;
+  word-break: break-all;
 }

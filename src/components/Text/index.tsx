@@ -1,10 +1,8 @@
-import { ReactNode } from 'react';
 import classes from './text.module.css';
+import { ReactTagProps } from '../../types';
 
-export type TextProps = {
-  children: ReactNode;
-};
+export type TextProps = Omit<ReactTagProps<'p'>, 'className'>;
 
 export const Text = (props: TextProps) => {
-  return <p className={classes.text}>{props.children}</p>;
+  return <p {...props} className={classes.text} />;
 };

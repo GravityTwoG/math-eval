@@ -1,3 +1,10 @@
+.postfix-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .postfix-tree {
   display: inline-block;
   margin: 1rem 0;
@@ -17,6 +24,7 @@
   font-size: 16px;
   position: relative;
   transition: background-color 0.1s linear;
+  word-wrap: break-word;
 }
 
 .postfix-node-view-operand {
@@ -28,6 +36,8 @@
   background: transparent;
   transition: background-color 0.1s linear;
   pointer-events: none;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .postfix-node-view-operand1,
@@ -53,7 +63,7 @@
 }
 
 .postfix-node-hover:hover ~ .postfix-node-view-operand1 {
-  background-color: rgba(255, 77, 106, 0.9);
+  background-color: var(--color-red);
 }
 .postfix-node-hover:hover ~ .postfix-node-view-operand2 {
   background-color: rgba(44, 109, 194, 0.9);
@@ -62,4 +72,10 @@
 .postfix-node-view > .postfix-node-view-operation {
   display: inline-block;
   font-size: 14px;
+}
+
+.postfix-raw {
+  max-width: 100%;
+  word-wrap: break-word;
+  word-break: break-all;
 }

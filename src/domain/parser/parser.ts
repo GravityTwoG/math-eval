@@ -74,7 +74,7 @@ export function parse(tokens: Token[]): ParserResult {
         } else {
           return {
             isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in Expression`,
+            message: `Unexpected token: "${token.type}: ${token.value}" in Expression`,
             postfix,
           };
         }
@@ -110,7 +110,7 @@ export function parse(tokens: Token[]): ParserResult {
 
           return {
             isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in ExpressionEnd`,
+            message: `Unexpected token: "${token.type}: ${token.value}" in ExpressionEnd`,
             postfix,
           };
         } else if (
@@ -121,7 +121,7 @@ export function parse(tokens: Token[]): ParserResult {
         } else {
           return {
             isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in ExpressionEnd2`,
+            message: `Unexpected token: "${token.type}: ${token.value}" in ExpressionEnd2`,
             postfix,
           };
         }
@@ -149,7 +149,7 @@ export function parse(tokens: Token[]): ParserResult {
           // theoretically unreachable
           return {
             isValid: false,
-            message: `Unexpected token: "${token.type}:${token.value}" in EndExpr`,
+            message: `Unexpected token: "${token.type}: ${token.value}" in EndExpr`,
             postfix,
           };
         }

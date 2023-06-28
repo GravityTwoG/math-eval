@@ -8,6 +8,7 @@ import { TokensList } from './components/TokensList';
 import { PostfixView } from './components/PostfixView';
 import { PseudoCodeView } from './components/PseudoCodeView';
 import { Text } from './components/Text';
+import { ErrorText } from './components/ErrorText';
 
 export function App() {
   const [expression, setExpression] = useState('');
@@ -45,7 +46,7 @@ export function App() {
           pattern={/[0-9. +*\-/()^]+/g}
           style={{ width: '100%', maxWidth: '900px' }}
           rows={3}
-          placeholder="2 + 2 * 2"
+          placeholder="2 - 2 * 6 / 3 - 4 ^ 2 - (9 + 5)"
           autoFocus
           isValid={result.parser.isValid}
         />
@@ -53,16 +54,24 @@ export function App() {
 
       <h2>Result</h2>
       {!result.evaluated.isValid && expression.trim() !== '' && (
-        <Text>Error: {result.evaluated.message}</Text>
+        <ErrorText>Error: {result.evaluated.message}</ErrorText>
       )}
-      <Text>{result.evaluated.result.toLocaleString()}</Text>
+      {result.evaluated.isValid && (
+        <Text style={{ fontSize: '1.5rem' }}>
+          {result.evaluated.result.toLocaleString()}
+        </Text>
+      )}
 
       <h2>Lexer Result</h2>
-      {!result.lexer.isValid && <Text>Error: {result.lexer.message}</Text>}
+      {!result.lexer.isValid && (
+        <ErrorText>Error: {result.lexer.message}</ErrorText>
+      )}
       <TokensList tokens={result.lexer.lexems} />
 
       <h2>Parser Result</h2>
-      {!result.parser.isValid && <Text>Error: {result.parser.message}</Text>}
+      {!result.parser.isValid && (
+        <ErrorText>Error: {result.parser.message}</ErrorText>
+      )}
       <PostfixView postfix={result.parser.postfix} />
 
       <h2>Pseudocode</h2>
@@ -74,13 +83,13 @@ export function App() {
 
       <h2>Result</h2>
       {!result.evaluated.isValid && expression.trim() !== '' && (
-        <Text>Error: {result.evaluated.message}</Text>
+        <ErrorText>Error: {result.evaluated.message}</ErrorText>
       )}
       <Text>
-        Then pseudocode is executed one by one while saving results of executed
-        commands in execution stack. If command requires an execution result of
-        previous command (POP), then value of operand is extracted from the
-        execution stack.
+        Then commands in pseudocode are executed one by one while saving results
+        of executed commands in execution stack. If command requires an result
+        of previous command execution (POP), then value of operand is extracted
+        from the stack.
       </Text>
       <Text>{result.evaluated.result.toLocaleString()}</Text>
 

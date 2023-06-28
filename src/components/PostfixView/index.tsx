@@ -13,7 +13,7 @@ export const PostfixView = (props: PostfixViewProps) => {
   const tree = useMemo(() => postfixToTree(props.postfix), [props.postfix]);
 
   return (
-    <div>
+    <div className={classes['postfix-view']}>
       <Text>
         Parser checks validity of sequence of tokens and translates it to{' '}
         <strong>postfix notation</strong>.
@@ -26,7 +26,7 @@ export const PostfixView = (props: PostfixViewProps) => {
         long as each operator has a fixed number of operands.
       </Text>
       <Text>Postfix Notation:</Text>
-      <div>{props.postfix.join(' ')}</div>
+      <div className={classes['postfix-raw']}>{props.postfix.join(' ')}</div>
 
       <div className={classes['postfix-tree']}>
         {tree.map((p, idx) => (

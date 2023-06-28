@@ -20,6 +20,8 @@
   --color-yellow-text: #000;
   --color-green-text: #000;
   --color-violet-text: #fff;
+
+  --color-red: rgba(255, 77, 106, 0.9);
 }
 
 #root {

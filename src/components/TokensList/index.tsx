@@ -10,10 +10,9 @@ export type TokensListProps = {
 
 export const TokensList = (props: TokensListProps) => {
   return (
-    <div>
-      <Text>Lexer translates expression to sequence of tokens.</Text>
+    <div className={classes.tokens}>
+      <Text>Lexer translates expression to sequence of tokens: </Text>
 
-      <Text>Tokens:</Text>
       <ul className={classes['tokens-list']}>
         {props.tokens.map((token, idx) => (
           <TokenItem key={idx} token={token} />

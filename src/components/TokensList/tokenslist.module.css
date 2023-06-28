@@ -1,3 +1,11 @@
+.tokens {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .tokens-list {
   display: flex;
   justify-content: center;
@@ -8,6 +16,7 @@
 }
 
 .token-item {
+  max-width: 100%;
   margin: 2px;
   display: inline-flex;
   flex-direction: column;
@@ -17,6 +26,8 @@
   background-color: #fff;
   color: #000;
   border: 1px solid #777;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .token-item[data-token-type='CONST'] {
@@ -34,10 +45,13 @@
 }
 
 .token-value {
+  max-width: 100%;
   display: inline-block;
   margin-bottom: 2px;
   font-size: 16px;
   line-height: 1;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .token-type {
