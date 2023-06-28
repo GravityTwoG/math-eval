@@ -11,6 +11,7 @@ import {
   TokenPAREN_CLOSE,
   TokenPAREN_OPEN,
   TokenSUB,
+  TokenPOW,
 } from '../types';
 
 describe('Parser', () => {
@@ -84,7 +85,7 @@ describe('Parser', () => {
     expect(res.postfix).toStrictEqual(['1.1', '2.2', TokenADD.type]);
   });
 
-  test('CONST ADD CONST ADD is valid', () => {
+  test('CONST ADD CONST ADD CONST is valid', () => {
     const res = parse([
       { type: TokenType.CONST, value: '1' },
       TokenADD,
@@ -100,6 +101,58 @@ describe('Parser', () => {
       '2',
       TokenADD.type,
       '3',
+      TokenADD.type,
+    ]);
+  });
+
+  test('CONST POW CONST is valid', () => {
+    const res = parse([
+      { type: TokenType.CONST, value: '1' },
+      TokenPOW,
+      { type: TokenType.CONST, value: '2' },
+      TokenEOF,
+    ]);
+
+    expect(res.isValid).toBe(true);
+    expect(res.postfix).toStrictEqual(['1', '2', TokenPOW.type]);
+  });
+
+  test('CONST POW CONST POW CONST is valid', () => {
+    const res = parse([
+      { type: TokenType.CONST, value: '1' },
+      TokenPOW,
+      { type: TokenType.CONST, value: '2' },
+      TokenPOW,
+      { type: TokenType.CONST, value: '3' },
+      TokenEOF,
+    ]);
+
+    expect(res.isValid).toBe(true);
+    expect(res.postfix).toStrictEqual([
+      '1',
+      '2',
+      '3',
+      TokenPOW.type,
+      TokenPOW.type,
+    ]);
+  });
+
+  test('CONST ADD CONST POW CONST is valid', () => {
+    const res = parse([
+      { type: TokenType.CONST, value: '1' },
+      TokenADD,
+      { type: TokenType.CONST, value: '2' },
+      TokenPOW,
+      { type: TokenType.CONST, value: '3' },
+      TokenEOF,
+    ]);
+
+    expect(res.isValid).toBe(true);
+    expect(res.postfix).toStrictEqual([
+      '1',
+      '2',
+      '3',
+      TokenPOW.type,
       TokenADD.type,
     ]);
   });

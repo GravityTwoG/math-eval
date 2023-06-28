@@ -1,4 +1,5 @@
-import { isArithmetic } from '../isArithmetic';
+import { getPriority } from '../getPriority';
+import { isArithmeticToken } from '../isArithmetic';
 import { Token, TokenType } from '../types';
 
 // Expression: ( (-)? BegExpr EndExpr? )
@@ -39,6 +40,7 @@ export function parse(tokens: Token[]): ParserResult {
     | TokenType.SUB
     | TokenType.MUL
     | TokenType.DIV
+    | TokenType.POW
     | TokenType.PAREN_OPEN
     | TokenType.PAREN_CLOSE
     | TokenType.CONST
@@ -81,7 +83,6 @@ export function parse(tokens: Token[]): ParserResult {
 
       case 'BegExpr': {
         if (token.type === TokenType.CONST) {
-          // states.push(TokenType.CONST); // get next token
           postfix.push(token.value);
           getNextToken();
         } else if (token.type === TokenType.PAREN_OPEN) {
@@ -100,7 +101,7 @@ export function parse(tokens: Token[]): ParserResult {
       }
 
       case 'ExpressionEnd': {
-        if (isArithmetic(token)) {
+        if (isArithmeticToken(token)) {
           states.push('EndExpr');
         } else if (token.type === TokenType.PAREN_CLOSE) {
           if (states.find((s) => s === TokenType.PAREN_CLOSE)) {
@@ -128,13 +129,15 @@ export function parse(tokens: Token[]): ParserResult {
       }
 
       case 'EndExpr': {
-        if (isArithmetic(token)) {
+        if (isArithmeticToken(token)) {
           states.push('EndExprEnd');
           states.push('Expression');
 
           while (
             opStack.length &&
-            getPriority(peek(opStack)) >= getPriority(token.type)
+            (getPriority(peek(opStack)) > getPriority(token.type) ||
+              (getPriority(peek(opStack)) === getPriority(token.type) &&
+                token.associative === 'left'))
           ) {
             // operations with higher priority goes first
             postfix.push(opStack.pop() as string);
@@ -200,20 +203,4 @@ export function parse(tokens: Token[]): ParserResult {
 
 function peek<T>(arr: T[]): T {
   return arr[arr.length - 1];
-}
-
-const operationPriorities = {
-  [TokenType.PAREN_OPEN]: 0,
-  [TokenType.ADD]: 5,
-  [TokenType.SUB]: 5,
-  [TokenType.MUL]: 10,
-  [TokenType.DIV]: 10,
-} as { [key: string]: number };
-
-function getPriority(operation: string) {
-  if (operationPriorities[operation] !== undefined) {
-    return operationPriorities[operation];
-  }
-
-  return 0;
 }

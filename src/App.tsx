@@ -42,7 +42,7 @@ export function App() {
         <TextArea
           value={expression}
           onChange={(v) => setExpression(v)}
-          pattern={/[0-9. +*\-/()]+/g}
+          pattern={/[0-9. +*\-/()^]+/g}
           style={{ width: '100%', maxWidth: '900px' }}
           rows={3}
           placeholder="2 + 2 * 2"

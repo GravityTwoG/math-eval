@@ -2,7 +2,7 @@ import { describe, test, expect } from '@jest/globals';
 
 import { evaluate } from './evaluator';
 
-import { TokenADD, TokenDIV, TokenMUL, TokenSUB } from '../types';
+import { TokenADD, TokenDIV, TokenMUL, TokenPOW, TokenSUB } from '../types';
 
 describe('Evaluator', () => {
   test('Empty code is invalid', () => {
@@ -52,6 +52,15 @@ describe('Evaluator', () => {
 
     expect(res.isValid).toBe(true);
     expect(res.result).toBe(2);
+  });
+
+  test('POW', () => {
+    const res = evaluate([
+      { operation: TokenPOW.type, operand1: '4', operand2: '2' },
+    ]);
+
+    expect(res.isValid).toBe(true);
+    expect(res.result).toBe(16);
   });
 
   test('DIV by zero', () => {

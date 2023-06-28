@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import classes from './postfix-view.module.css';
 
-import { TokenType } from '../../domain';
+import { isArithmeticOperation } from '../../domain';
 
 import { Text } from '../Text';
 
@@ -83,28 +83,20 @@ function postfixToTree(postfix: string[]) {
   for (let i = 0; i < postfix.length; i++) {
     const word = postfix[i];
 
-    switch (word) {
-      case TokenType.ADD:
-      case TokenType.SUB:
-      case TokenType.MUL:
-      case TokenType.DIV: {
-        if (stack.length >= 2) {
-          stack.push({
-            operation: word,
-            operand2: stack.pop() as string,
-            operand1: stack.pop() as string,
-          });
-        } else {
-          return stack;
-        }
-        break;
+    if (isArithmeticOperation(word)) {
+      if (stack.length >= 2) {
+        stack.push({
+          operation: word,
+          operand2: stack.pop() as string,
+          operand1: stack.pop() as string,
+        });
+      } else {
+        return stack;
       }
-      default:
-        if (word.match(/[0-9.]+/)) {
-          stack.push(word);
-        } else {
-          return stack;
-        }
+    } else if (word.match(/[0-9.]+/)) {
+      stack.push(word);
+    } else {
+      return stack;
     }
   }
 

@@ -6,6 +6,7 @@ import {
   TokenMUL,
   TokenPAREN_CLOSE,
   TokenPAREN_OPEN,
+  TokenPOW,
   TokenSUB,
   TokenType,
 } from '../types';
@@ -72,6 +73,10 @@ export function getLexems(content: string): LexerResult {
           lexems.push(TokenDIV);
           break;
         }
+        case TokenPOW.value: {
+          lexems.push(TokenPOW);
+          break;
+        }
         case TokenPAREN_OPEN.value: {
           lexems.push(TokenPAREN_OPEN);
           break;
@@ -79,6 +84,13 @@ export function getLexems(content: string): LexerResult {
         case TokenPAREN_CLOSE.value: {
           lexems.push(TokenPAREN_CLOSE);
           break;
+        }
+        default: {
+          return {
+            isValid: false,
+            message: `Unexpected symbol: ${char}`,
+            lexems,
+          };
         }
       }
     }

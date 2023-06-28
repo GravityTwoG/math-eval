@@ -1,4 +1,4 @@
 export * from './types.ts';
 
-export { isArithmetic } from './isArithmetic.ts';
-export { evaluateExpression } from './math-evaluator.ts';
+export { isArithmeticToken, isArithmeticOperation } from './isArithmetic.ts';
+export { evaluateExpression } from './math-evaluator/math-evaluator.ts';

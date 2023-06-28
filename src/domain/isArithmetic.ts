@@ -1,10 +1,17 @@
 import { ArithmeticToken, Token, TokenType } from './types';
 
-export function isArithmetic(token: Token): token is ArithmeticToken {
+export function isArithmeticOperation(
+  operation: string
+): operation is ArithmeticToken['type'] {
   return (
-    token.type === TokenType.ADD ||
-    token.type === TokenType.SUB ||
-    token.type === TokenType.MUL ||
-    token.type === TokenType.DIV
+    operation === TokenType.ADD ||
+    operation === TokenType.SUB ||
+    operation === TokenType.MUL ||
+    operation === TokenType.DIV ||
+    operation === TokenType.POW
   );
+}
+
+export function isArithmeticToken(token: Token): token is ArithmeticToken {
+  return isArithmeticOperation(token.type);
 }

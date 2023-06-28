@@ -65,6 +65,13 @@ export function evaluate(commands: Command[]): EvaluationResult {
           stack.push(operand1 / operand2);
           break;
         }
+        case TokenType.POW: {
+          const operand2 = extractOperand(command.operand2);
+          const operand1 = extractOperand(command.operand1);
+
+          stack.push(Math.pow(operand1, operand2));
+          break;
+        }
         case 'PUSH':
           stack.push(extractOperand(command.operand1));
           break;
